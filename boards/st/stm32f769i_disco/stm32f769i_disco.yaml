@@ -17,4 +17,5 @@ supported:
   - netif:eth
   - memc
   - dmic
+  - kscan:touch
 vendor: st

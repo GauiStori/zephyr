@@ -53,6 +53,9 @@
 	};
 
 	clocks {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
 		clk_hse: clk-hse {
 			#clock-cells = <0>;
 			compatible = "st,stm32-hse-clock";
@@ -81,9 +84,24 @@
 			status = "disabled";
 		};
 
-		pll: pll {
+		pll: pll@0 {
 			#clock-cells = <0>;
 			compatible = "st,stm32f7-pll-clock";
+			reg = <0>;
+			status = "disabled";
+		};
+
+		pll2: pll@1 {
+			#clock-cells = <0>;
+			compatible = "st,stm32f7-pll-clock";
+			reg = <1>;
+			status = "disabled";
+		};
+
+		pll3: pll@2 {
+			#clock-cells = <0>;
+			compatible = "st,stm32f7-pll-clock";
+			reg = <2>;
 			status = "disabled";
 		};
 

@@ -223,6 +223,10 @@ arduino_serial: &usart6 {};
 	};
 };
 
+&rng {
+	status = "okay";
+};
+
 &fmc {
 	status = "okay";
 	pinctrl-0 = <&fmc_nbl0_pe0 &fmc_nbl1_pe1 &fmc_nbl2_pi4 &fmc_nbl3_pi5

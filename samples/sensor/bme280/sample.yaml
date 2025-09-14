@@ -12,6 +12,7 @@ tests:
       - adafruit_feather_m0_basic_proto
       - rpi_pico
       - adafruit_qt_py_rp2040/rp2040
+      - stm32f769i_disco
     integration_platforms:
       - adafruit_feather_m0_basic_proto
     extra_args:

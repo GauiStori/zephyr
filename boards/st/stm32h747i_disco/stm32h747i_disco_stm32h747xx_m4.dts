@@ -35,6 +35,22 @@
 		joy_center: joystick_center {
 			status = "okay";
 		};
+
+		joy_down: joystick_down {
+			status = "okay";
+		};
+
+		joy_up: joystick_up {
+			status = "okay";
+		};
+
+		joy_left: joystick_left {
+			status = "okay";
+		};
+
+		joy_right: joystick_right {
+			status = "okay";
+		}
 	};
 
 	aliases {

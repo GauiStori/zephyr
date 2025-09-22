@@ -53,6 +53,26 @@
 		wake_up: button {
 			status = "okay";
 		};
+
+		joy_center: joystick_center {
+			status = "okay";
+		};
+
+		joy_down: joystick_down {
+			status = "okay";
+		};
+
+		joy_up: joystick_up {
+			status = "okay";
+		};
+
+		joy_left: joystick_left {
+			status = "okay";
+		};
+
+		joy_right: joystick_right {
+			status = "okay";
+		};
 	};
 
 	otghs_ulpi_phy: otghs_ulpis_phy {
@@ -64,6 +84,7 @@
 		led0 = &green_led_1;
 		led1 = &orange_led_2;
 		sw0 = &wake_up;
+		joy-up = &joy_up;
 	};
 
 	dsi_lcd_qsh_030: connector_dsi_lcd {

@@ -21,7 +21,8 @@
 /*
  * Get button configuration from the devicetree sw0 alias. This is mandatory.
  */
-#define SW0_NODE	DT_ALIAS(sw0)
+//#define SW0_NODE	DT_ALIAS(sw0)
+#define SW0_NODE	DT_ALIAS(joy_up)
 #if !DT_NODE_HAS_STATUS_OKAY(SW0_NODE)
 #error "Unsupported board: sw0 devicetree alias is not defined"
 #endif

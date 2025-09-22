@@ -60,162 +60,59 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 }
 
+int init_button_and_led(const struct gpio_dt_spec *button, struct gpio_dt_spec *led)
+{
+	if (!gpio_is_ready_dt(button)) {
+		printk("Error: button_up device %s is not ready\n",
+		       button->port->name);
+		return -1;
+	}
+
+	int ret = gpio_pin_configure_dt(button, GPIO_INPUT);
+	if (ret != 0) {
+		printk("Error %d: failed to configure %s pin %d\n",
+		       ret, button->port->name, button->pin);
+		return -1;
+	}
+
+	ret = gpio_pin_interrupt_configure_dt(button, GPIO_INT_EDGE_TO_ACTIVE);
+	if (ret != 0) {
+		printk("Error %d: failed to configure interrupt on %s pin %d\n",
+			ret, button->port->name, button->pin);
+		return -1;
+	}
+
+	gpio_init_callback(&button_cb_data, button_pressed, BIT(button->pin));
+	gpio_add_callback(button->port, &button_cb_data);
+	printk("Set up button at %s pin %d\n", button->port->name, button->pin);
+
+	if (led->port && !gpio_is_ready_dt(led)) {
+		printk("Error %d: LED device %s is not ready; ignoring it\n",
+		       ret, led->port->name);
+		led->port = NULL;
+	}
+
+	if (led->port) {
+		ret = gpio_pin_configure_dt(led, GPIO_OUTPUT);
+		if (ret != 0) {
+			printk("Error %d: failed to configure LED device %s pin %d\n",
+			       ret, led->port->name, led->pin);
+			led->port = NULL;
+		} else {
+			printk("Set up LED at %s pin %d\n", led->port->name, led->pin);
+		}
+	}
+	return 0;
+}
+
 int main(void)
 {
-	int ret;
+	//int ret;
 
-	if (!gpio_is_ready_dt(&button_up)) {
-		printk("Error: button_up device %s is not ready\n",
-		       button_up.port->name);
-		return 0;
-	}
-
-	ret = gpio_pin_configure_dt(&button_up, GPIO_INPUT);
-	if (ret != 0) {
-		printk("Error %d: failed to configure %s pin %d\n",
-		       ret, button_up.port->name, button_up.pin);
-		return 0;
-	}
-
-	ret = gpio_pin_interrupt_configure_dt(&button_up, GPIO_INT_EDGE_TO_ACTIVE);
-	if (ret != 0) {
-		printk("Error %d: failed to configure interrupt on %s pin %d\n",
-			ret, button_up.port->name, button_up.pin);
-		return 0;
-	}
-
-	gpio_init_callback(&button_cb_data, button_pressed, BIT(button_up.pin));
-	gpio_add_callback(button_up.port, &button_cb_data);
-	printk("Set up button_up at %s pin %d\n", button_up.port->name, button_up.pin);
-
-	if (!gpio_is_ready_dt(&button_left)) {
-		printk("Error: button_left device %s is not ready\n",
-		       button_left.port->name);
-		return 0;
-	}
-
-	ret = gpio_pin_configure_dt(&button_left, GPIO_INPUT);
-	if (ret != 0) {
-		printk("Error %d: failed to configure %s pin %d\n",
-		       ret, button_left.port->name, button_left.pin);
-		return 0;
-	}
-
-	ret = gpio_pin_interrupt_configure_dt(&button_left, GPIO_INT_EDGE_TO_ACTIVE);
-	if (ret != 0) {
-		printk("Error %d: failed to configure interrupt on %s pin %d\n",
-			ret, button_left.port->name, button_left.pin);
-		return 0;
-	}
-
-	gpio_init_callback(&button_cb_data, button_pressed, BIT(button_left.pin));
-	gpio_add_callback(button_left.port, &button_cb_data);
-	printk("Set up button_left at %s pin %d\n", button_left.port->name, button_left.pin);
-
-	if (!gpio_is_ready_dt(&button_right)) {
-		printk("Error: button_right device %s is not ready\n",
-		       button_right.port->name);
-		return 0;
-	}
-
-	ret = gpio_pin_configure_dt(&button_right, GPIO_INPUT);
-	if (ret != 0) {
-		printk("Error %d: failed to configure %s pin %d\n",
-		       ret, button_right.port->name, button_right.pin);
-		return 0;
-	}
-
-	ret = gpio_pin_interrupt_configure_dt(&button_right, GPIO_INT_EDGE_TO_ACTIVE);
-	if (ret != 0) {
-		printk("Error %d: failed to configure interrupt on %s pin %d\n",
-			ret, button_right.port->name, button_right.pin);
-		return 0;
-	}
-
-	gpio_init_callback(&button_cb_data, button_pressed, BIT(button_right.pin));
-	gpio_add_callback(button_right.port, &button_cb_data);
-	printk("Set up button_right at %s pin %d\n", button_right.port->name, button_right.pin);
-
-
-	ret = gpio_pin_configure_dt(&button_down, GPIO_INPUT);
-	if (ret != 0) {
-		printk("Error %d: failed to configure %s pin %d\n",
-		       ret, button_down.port->name, button_down.pin);
-		return 0;
-	}
-
-	ret = gpio_pin_interrupt_configure_dt(&button_down, GPIO_INT_EDGE_TO_ACTIVE);
-	if (ret != 0) {
-		printk("Error %d: failed to configure interrupt on %s pin %d\n",
-			ret, button_down.port->name, button_down.pin);
-		return 0;
-	}
-
-	gpio_init_callback(&button_cb_data, button_pressed, BIT(button_down.pin));
-	gpio_add_callback(button_down.port, &button_cb_data);
-	printk("Set up button_down at %s pin %d\n", button_down.port->name, button_down.pin);
-
-	if (led0.port && !gpio_is_ready_dt(&led0)) {
-		printk("Error %d: LED device %s is not ready; ignoring it\n",
-		       ret, led0.port->name);
-		led0.port = NULL;
-	}
-	if (led1.port && !gpio_is_ready_dt(&led1)) {
-		printk("Error %d: LED device %s is not ready; ignoring it\n",
-		       ret, led1.port->name);
-		led1.port = NULL;
-	}
-	if (led2.port && !gpio_is_ready_dt(&led2)) {
-		printk("Error %d: LED device %s is not ready; ignoring it\n",
-		       ret, led2.port->name);
-		led2.port = NULL;
-	}
-	if (led3.port && !gpio_is_ready_dt(&led3)) {
-		printk("Error %d: LED device %s is not ready; ignoring it\n",
-		       ret, led3.port->name);
-		led3.port = NULL;
-	}
-
-	if (led0.port) {
-		ret = gpio_pin_configure_dt(&led0, GPIO_OUTPUT);
-		if (ret != 0) {
-			printk("Error %d: failed to configure LED device %s pin %d\n",
-			       ret, led0.port->name, led0.pin);
-			led0.port = NULL;
-		} else {
-			printk("Set up LED0 at %s pin %d\n", led0.port->name, led0.pin);
-		}
-	}
-	if (led1.port) {
-		ret = gpio_pin_configure_dt(&led1, GPIO_OUTPUT);
-		if (ret != 0) {
-			printk("Error %d: failed to configure LED device %s pin %d\n",
-			       ret, led1.port->name, led1.pin);
-			led1.port = NULL;
-		} else {
-			printk("Set up LED1 at %s pin %d\n", led1.port->name, led1.pin);
-		}
-	}
-	if (led2.port) {
-		ret = gpio_pin_configure_dt(&led2, GPIO_OUTPUT);
-		if (ret != 0) {
-			printk("Error %d: failed to configure LED device %s pin %d\n",
-			       ret, led2.port->name, led2.pin);
-			led2.port = NULL;
-		} else {
-			printk("Set up LED2 at %s pin %d\n", led2.port->name, led2.pin);
-		}
-	}
-	if (led3.port) {
-		ret = gpio_pin_configure_dt(&led3, GPIO_OUTPUT);
-		if (ret != 0) {
-			printk("Error %d: failed to configure LED device %s pin %d\n",
-			       ret, led3.port->name, led3.pin);
-			led3.port = NULL;
-		} else {
-			printk("Set up LED3 at %s pin %d\n", led3.port->name, led3.pin);
-		}
-	}
+	init_button_and_led(&button_up,    &led0);
+	init_button_and_led(&button_left,  &led1);
+	init_button_and_led(&button_right, &led2);
+	init_button_and_led(&button_down,  &led3);
 
 	printk("Press the button\n");
 	if (led0.port) {

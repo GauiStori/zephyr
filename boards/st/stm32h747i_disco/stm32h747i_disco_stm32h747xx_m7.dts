@@ -47,6 +47,14 @@
 		orange_led_2: led_2 {
 			status = "okay";
 		};
+
+		red_led_3:    led_3 {
+			status = "okay";
+		};
+
+		blue_led_4: led_4 {
+			status = "okay";
+		};
 	};
 
 	gpio_keys {
@@ -83,8 +91,13 @@
 	aliases {
 		led0 = &green_led_1;
 		led1 = &orange_led_2;
+		led2 = &red_led_3;
+		led3 = &blue_led_4;
 		sw0 = &wake_up;
 		joy-up = &joy_up;
+		joy-left = &joy_left;
+		joy-right = &joy_right;
+		joy-down = &joy_down;
 	};
 
 	dsi_lcd_qsh_030: connector_dsi_lcd {

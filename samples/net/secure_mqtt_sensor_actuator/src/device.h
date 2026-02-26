@@ -41,7 +41,7 @@ bool devices_ready(void);
 /**
  *  @brief Read sample from the sensor
  */
-int device_read_sensor(struct sensor_sample *sample);
+int device_read_sensor(int *out);
 
 /**
  *  @brief Write to a board LED

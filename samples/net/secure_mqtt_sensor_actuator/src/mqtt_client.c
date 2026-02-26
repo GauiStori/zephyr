@@ -15,9 +15,14 @@ LOG_MODULE_REGISTER(app_mqtt, LOG_LEVEL_DBG);
 #include <zephyr/posix/poll.h>
 #include <zephyr/posix/sys/socket.h>
 #include <zephyr/random/random.h>
+#include <zephyr/drivers/sensor_data_types.h>
+#include <stdio.h>
 
 #include "mqtt_client.h"
 #include "device.h"
+
+#define CONFIG_NET_SAMPLE_MQTT_BROKER_HOSTN "10.66.57.66"
+#define CONFIG_NET_SAMPLE_MQTT_BROKER_P     "1883"
 
 /* Buffers for MQTT client */
 static uint8_t rx_buffer[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
@@ -270,20 +275,25 @@ static int poll_mqtt_socket(struct mqtt_client *client, int timeout)
 static int get_mqtt_payload(struct mqtt_binstr *payload)
 {
 	int rc;
-	struct sensor_sample sample;
+	//struct sensor_sample sample;
+	int vals[6];
 
-	rc = device_read_sensor(&sample);
+	rc = device_read_sensor(vals);
 	if (rc != 0) {
 		LOG_ERR("Failed to get sensor sample [%d]", rc);
 		return rc;
 	}
 
-	rc = json_obj_encode_buf(sensor_sample_descr, ARRAY_SIZE(sensor_sample_descr),
-					&sample, payload_buf, CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE);
-	if (rc != 0) {
+	/*rc = json_obj_encode_buf(sensor_sample_descr, ARRAY_SIZE(sensor_sample_descr),
+					&sample, payload_buf, CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE);*/
+	sprintf((char*) payload_buf,"{\"temp\":{\"unit\":\"Celsius\", \"value\":%s%d.%d},\"press\":{\"unit\":\"Bar\",\"value\":%s%d.%d},\"humidity\":{\"unit\":\"\%\",\"value\":%s%d.%d\n}",
+		PRIq_arg(vals[0], 6,vals[1]),
+		PRIq_arg(vals[2], 6,vals[3]),
+		PRIq_arg(vals[4], 6,vals[5]));
+	printf("payload = %s",payload_buf);
+	/*if (rc != 0) {
 		LOG_ERR("Failed to encode JSON object [%d]", rc);
-		return rc;
-	}
+		return rc;*/
 
 	payload->data = payload_buf;
 	payload->len = strlen(payload->data);
@@ -447,8 +457,8 @@ int app_mqtt_init(struct mqtt_client *client)
 	};
 
 	/* Resolve IP address of MQTT broker */
-	rc = getaddrinfo(CONFIG_NET_SAMPLE_MQTT_BROKER_HOSTNAME,
-				CONFIG_NET_SAMPLE_MQTT_BROKER_PORT, &hints, &result);
+	rc = getaddrinfo(CONFIG_NET_SAMPLE_MQTT_BROKER_HOSTN,
+				CONFIG_NET_SAMPLE_MQTT_BROKER_P, &hints, &result);
 	if (rc != 0) {
 		LOG_ERR("Failed to resolve broker hostname [%s]", gai_strerror(rc));
 		return -EIO;

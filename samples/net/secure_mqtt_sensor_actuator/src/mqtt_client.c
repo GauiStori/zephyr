@@ -25,11 +25,14 @@ LOG_MODULE_REGISTER(app_mqtt, LOG_LEVEL_DBG);
 #define CONFIG_NET_SAMPLE_MQTT_BROKER_P     "1883"
 
 /* Buffers for MQTT client */
-static uint8_t rx_buffer[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
-static uint8_t tx_buffer[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
+//static uint8_t rx_buffer[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
+//static uint8_t tx_buffer[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
+static uint8_t rx_buffer[256];
+static uint8_t tx_buffer[256];
 
 /* MQTT payload buffer */
-static uint8_t payload_buf[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
+//static uint8_t payload_buf[CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE];
+static uint8_t payload_buf[256];
 
 /* MQTT broker details */
 static struct sockaddr_storage broker;
@@ -286,7 +289,7 @@ static int get_mqtt_payload(struct mqtt_binstr *payload)
 
 	/*rc = json_obj_encode_buf(sensor_sample_descr, ARRAY_SIZE(sensor_sample_descr),
 					&sample, payload_buf, CONFIG_NET_SAMPLE_MQTT_PAYLOAD_SIZE);*/
-	sprintf((char*) payload_buf,"{\"temp\":{\"unit\":\"Celsius\", \"value\":%s%d.%d},\"press\":{\"unit\":\"Bar\",\"value\":%s%d.%d},\"humidity\":{\"unit\":\"\%\",\"value\":%s%d.%d\n}",
+	sprintf((char*) payload_buf,"{\"temp\":{\"unit\":\"Celsius\", \"value\":%s%d.%d},\"press\":{\"unit\":\"Bar\",\"value\":%s%d.%d},\"humidity\":{\"unit\":\"\%\",\"value\":%s%d.%d}}",
 		PRIq_arg(vals[0], 6,vals[1]),
 		PRIq_arg(vals[2], 6,vals[3]),
 		PRIq_arg(vals[4], 6,vals[5]));

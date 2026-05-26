@@ -110,6 +110,19 @@ manifest:
       revision: da246018ebe031e4fe4a8228187fb459e9f3b2fa
       groups:
         - babblesim
+    - name: bacnet
+      path: modules/lib/bacnet
+      #url: https://github.com/bacnet-stack/bacnet-stack-zephyr
+      url: https://github.com/GauiStori/bacnet-stack-zephyr
+      revision: default
+      import:
+        name-allowlist:
+          - bacnet-stack
+    - name: bacnet-stack
+      path: modules/lib/bacnet/stack
+      #url: https://github.com/bacnet-stack/bacnet-stack
+      url: https://github.com/GauiStori/bacnet-stack
+      revision: master
     - name: bsim
       repo-path: babblesim-manifest
       revision: 7e10d556b5dd04360756cdf1f4b80d4f5bcac6cf
